@@ -1,8 +1,8 @@
-name: First Workflow
+name: Data Sync
 
 on:
-    issue_comment:
-        types: [created, deleted]
+    schedule:
+        - cron: '0/5 * * * *'
 
 jobs:
     build:
