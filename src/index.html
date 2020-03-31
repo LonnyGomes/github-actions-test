@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-161866462-1"
+        ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-161866462-1');
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+        <title>COVID-19 Global Cases: A D3 Visualization</title>
+        <!-- Primary Meta Tags -->
+        <meta
+            name="title"
+            content="COVID-19 Global Cases: A D3 Visualization by Lonny Gomes"
+        />
+        <meta
+            name="description"
+            content="A D3-based visualization that displays worldwide COVID-19 cases in a sankey diagram"
+        />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://covid.lonnygomes.com" />
+        <meta
+            property="og:title"
+            content="COVID-19 Global Cases: A D3 Visualization by Lonny Gomes"
+        />
+        <meta
+            property="og:description"
+            content="A D3-based visualization that displays worldwide COVID-19 cases in a sankey diagram"
+        />
+        <meta
+            property="og:image"
+            content="https://raw.githubusercontent.com/LonnyGomes/covid-sankey-vizualization/master/assets/screenshot.png"
+        />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://covid.lonnygomes.com" />
+        <meta
+            property="twitter:title"
+            content="COVID-19 Global Cases: A D3 Visualization by Lonny Gomes"
+        />
+        <meta
+            property="twitter:description"
+            content="A D3-based visualization that displays worldwide COVID-19 cases in a sankey diagram"
+        />
+        <meta
+            property="twitter:image"
+            content="https://raw.githubusercontent.com/LonnyGomes/covid-sankey-vizualization/master/assets/screenshot.png"
+        />
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Raleway&family=Roboto:ital,wght@0,300;0,400;0,500;1,100&display=swap');
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            <header class="header-container">
+                <div class="header">
+                    <div class="header-title">
+                        <h1>COVID-19 Global Cases</h1>
+                        <h3 id="timestamp-label">Last updated: N/A</h3>
+                    </div>
+                    <div class="country-dropdown">
+                        <label for="countries">Select a location</label>
+                        <select class="select-css" id="countries"></select>
+                    </div>
+                </div>
+            </header>
+            <div class="leader-board-container">
+                <div id="leader-board"></div>
+            </div>
+            <div class="chart-container">
+                <div id="chart"></div>
+            </div>
+            <div class="notes">
+                <h2>Footnotes</h2>
+
+                <div id="footnotes"></div>
+            </div>
+            <div class="notes">
+                <h2>Methodology Note</h2>
+                <p>
+                    This data visualization uses a
+                    <a href="https://en.wikipedia.org/wiki/Sankey_diagram"
+                        >sankey diagram</a
+                    >
+                    to responsibly display the overall reported cases and death
+                    toll of the 2019-2020 novel COVID-19 pandemic broken down by
+                    geography.
+                </p>
+
+                <p>
+                    All reporting is at the country level with the exception of
+                    the United States which contains state-level detail.
+                </p>
+
+                <button id="notes-toggle-btn">Toggle details</button>
+                <div id="full-methodology-notes" class="hidden">
+                    <h3>Data sources</h3>
+                    <p>
+                        The data is derived from Johns Hopkins University Center
+                        for Systems Science and Engineering (<a
+                            href="https://github.com/CSSEGISandData/COVID-19"
+                            >JHU CSSE</a
+                        >).
+                    </p>
+                    <p>
+                        This visual uses consolidated data sources of the JHU
+                        CSSEE data sources from
+                        <a href="https://github.com/pomber/covid19/"
+                            >@covid19</a
+                        >
+                        and
+                        <a href="https://github.com/NovelCOVID/API"
+                            >@NovelCOVID</a
+                        >.
+                    </p>
+
+                    <p>
+                        This dataset usually tracks 12-24 hours behind the
+                        latest reporting from JHU CSSE, so refer to
+                        <a
+                            href="https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6"
+                            >their dashboard</a
+                        >
+                        for the most up to date information.
+                    </p>
+
+                    <h3>Data Grouping</h3>
+                    <p>
+                        All countries that have reported less than 5,000 cases
+                        have been grouped in to one category labeled as "Other"
+                        to reduce visual noise in the visualization.
+                    </p>
+                    <p>
+                        The United States is further broken down by state and
+                        groups the states in the "Other" category using a
+                        different threshold.
+                    </p>
+                    <p>
+                        The specific threshold values are noted in the footnotes
+                        section.
+                    </p>
+
+                    <h3>Total Confirmed Metric</h3>
+                    <p>
+                        The JHU CSSE consolidated total of confirmed cases of
+                        COVID-19. Note that confirmed cases are just that, and
+                        there are an unknown quantity of unreported COVID-19
+                        cases.
+                    </p>
+
+                    <h3>Total Deaths Metric</h3>
+                    <p>
+                        The JHU CSSE consolidated total COVID-19 related deaths
+                        reported by various governmental agencies.
+                    </p>
+
+                    <h3>Total Recovered Metric</h3>
+                    <p>
+                        The consolidated total reported recovered cases. Keep in
+                        mind that the reporting of this metric is likely to be
+                        inconsistent across global government agencies.
+                    </p>
+
+                    <h3>Active Cases Metric</h3>
+                    <p>
+                        The visualization computes this number by subtracting
+                        the total recovered and total deaths from the total
+                        confirmed cases:
+                    </p>
+                    <div class="centered">
+                        <code class="formula"
+                            >Active Cases = Total Confirmed - Total Deaths -
+                            Total Recovered</code
+                        >
+                    </div>
+                    <h3>Death Rate</h3>
+                    <p>
+                        The visualization computes this number by dividing the
+                        Total Deaths metric by the Total Confirmed cases:
+                    </p>
+
+                    <div class="centered">
+                        <code class="formula"
+                            >Death Rate = Total Deaths / Total Confirmed</code
+                        >
+                    </div>
+
+                    <p>
+                        The technical term for this ratio is the
+                        <a
+                            href="https://en.wikipedia.org/wiki/Case_fatality_rate"
+                            >Case Fatality Rate</a
+                        >
+                        <em> (CFR)</em>. The CFR is different than the
+                        <a
+                            href="https://ourworldindata.org/covid-mortality-risk#the-crude-mortality-rate"
+                            >Crude Mortality Rate</a
+                        >
+                        <em>(CMR)</em>
+                        which calculates the likelihood of someone in the
+                        general population dying from the virus.
+                    </p>
+                </div>
+            </div>
+            <footer class="footer">
+                <p class="footer-item">
+                    © 2020
+                    <a href="https://twitter.com/lonnygomes">Lonny Gomes</a>
+                </p>
+                <p class="footer-item">
+                    <a
+                        href="https://github.com/LonnyGomes/covid-sankey-vizualization"
+                        >GitHub</a
+                    >
+                </p>
+            </footer>
+        </div>
+        <script src="./index.js"></script>
+    </body>
+</html>
