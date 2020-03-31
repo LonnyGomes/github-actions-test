@@ -2,8 +2,8 @@ name: Data Sync
 
 on:
     schedule:
-        - cron: '*/5 * * * *'
-
+        # * is a special character in YAML so you have to quote this string
+        - cron: '*/6 * * * *'
 jobs:
     build:
         runs-on: ubuntu-latest
